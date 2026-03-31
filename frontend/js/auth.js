@@ -2,14 +2,14 @@
 // js/auth.js — Handles Sign In and Sign Up form logic
 // ============================================================
 
-const API = "http://localhost:3000/api";
+const API = "https://cloud-storage-app-1-oq19.onrender.com/";
 
 // ── Switch between Sign In / Sign Up tabs ───────────────────
 function switchTab(tab) {
   const signinForm = document.getElementById("signin-form");
   const signupForm = document.getElementById("signup-form");
-  const tabSignin  = document.getElementById("tab-signin");
-  const tabSignup  = document.getElementById("tab-signup");
+  const tabSignin = document.getElementById("tab-signin");
+  const tabSignup = document.getElementById("tab-signup");
 
   hideToast(); // clear any previous messages
 
@@ -53,8 +53,8 @@ function hideToast() {
 
 // ── Button loading state helpers ─────────────────────────────
 function setLoading(btnId, loading) {
-  const btn     = document.getElementById(btnId);
-  const text    = btn.querySelector(".btn-text");
+  const btn = document.getElementById(btnId);
+  const text = btn.querySelector(".btn-text");
   const spinner = btn.querySelector(".btn-spinner");
   btn.disabled = loading;
   text.classList.toggle("hidden", loading);
@@ -66,7 +66,7 @@ document.getElementById("signin-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   hideToast();
 
-  const email    = document.getElementById("signin-email").value.trim();
+  const email = document.getElementById("signin-email").value.trim();
   const password = document.getElementById("signin-password").value;
 
   if (!email || !password) {
@@ -76,7 +76,7 @@ document.getElementById("signin-form").addEventListener("submit", async (e) => {
   setLoading("signin-btn", true);
 
   try {
-    const res  = await fetch(`${API}/auth/signin`, {
+    const res = await fetch(`${API}/auth/signin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",   // send cookies for session
@@ -102,8 +102,8 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   hideToast();
 
-  const name     = document.getElementById("signup-name").value.trim();
-  const email    = document.getElementById("signup-email").value.trim();
+  const name = document.getElementById("signup-name").value.trim();
+  const email = document.getElementById("signup-email").value.trim();
   const password = document.getElementById("signup-password").value;
 
   if (!name || !email || !password) {
@@ -116,7 +116,7 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
   setLoading("signup-btn", true);
 
   try {
-    const res  = await fetch(`${API}/auth/signup`, {
+    const res = await fetch(`${API}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

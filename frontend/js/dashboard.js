@@ -2,7 +2,7 @@
 // js/dashboard.js — Handles file upload, listing, and deletion
 // ============================================================
 
-const API = "http://localhost:3000/api";
+const API = "https://cloud-storage-app-1-oq19.onrender.com/";
 
 // In-memory copy of the files list (used for search filtering)
 let allFiles = [];
@@ -13,7 +13,7 @@ let pendingDeleteId = null;
 // ── On page load: verify session, load user info + files ─────
 (async function init() {
   try {
-    const res  = await fetch(`${API}/auth/me`, { credentials: "include" });
+    const res = await fetch(`${API}/auth/me`, { credentials: "include" });
     const data = await res.json();
 
     if (!res.ok) {
@@ -24,7 +24,7 @@ let pendingDeleteId = null;
 
     // Display user name and avatar initial in the navbar
     const { name } = data.user;
-    document.getElementById("user-name").textContent   = name;
+    document.getElementById("user-name").textContent = name;
     document.getElementById("user-avatar").textContent = name.charAt(0).toUpperCase();
 
     // Load file list
@@ -38,9 +38,9 @@ let pendingDeleteId = null;
 async function loadFiles() {
   showFilesLoading(true);
   try {
-    const res  = await fetch(`${API}/files`, { credentials: "include" });
+    const res = await fetch(`${API}/files`, { credentials: "include" });
     const data = await res.json();
-    allFiles   = data.files || [];
+    allFiles = data.files || [];
     renderFiles(allFiles);
     updateStats(allFiles);
   } catch (err) {
@@ -52,8 +52,8 @@ async function loadFiles() {
 
 // ── Render file rows into the table ───────────────────────────
 function renderFiles(files) {
-  const tbody   = document.getElementById("files-tbody");
-  const empty   = document.getElementById("files-empty");
+  const tbody = document.getElementById("files-tbody");
+  const empty = document.getElementById("files-empty");
   const wrapper = document.getElementById("files-table-wrapper");
 
   tbody.innerHTML = "";
@@ -134,7 +134,7 @@ function updateStats(files) {
 
 // ── Search / filter files by name ─────────────────────────────
 function filterFiles() {
-  const query   = document.getElementById("search-input").value.toLowerCase();
+  const query = document.getElementById("search-input").value.toLowerCase();
   const filtered = allFiles.filter((f) =>
     f.originalName.toLowerCase().includes(query)
   );
@@ -176,15 +176,15 @@ async function uploadFiles(fileList) {
   if (!fileList || fileList.length === 0) return;
 
   const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
-  const toast    = document.getElementById("upload-toast");
+  const toast = document.getElementById("upload-toast");
   const progress = document.getElementById("upload-progress");
-  const bar      = document.getElementById("progress-bar-fill");
-  const label    = document.getElementById("progress-label");
+  const bar = document.getElementById("progress-bar-fill");
+  const label = document.getElementById("progress-label");
 
   hideUploadToast();
 
   let uploaded = 0;
-  let errors   = [];
+  let errors = [];
 
   progress.classList.remove("hidden");
 
@@ -198,13 +198,13 @@ async function uploadFiles(fileList) {
     }
 
     label.textContent = `Uploading ${i + 1} of ${fileList.length}: ${file.name}`;
-    bar.style.width   = `${Math.round(((i) / fileList.length) * 100)}%`;
+    bar.style.width = `${Math.round(((i) / fileList.length) * 100)}%`;
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const res  = await fetch(`${API}/files/upload`, {
+      const res = await fetch(`${API}/files/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -255,8 +255,8 @@ function handleDownload(e, fileId) {
     .then(({ blob, filename }) => {
       // Create a temporary anchor to trigger download
       const url = URL.createObjectURL(blob);
-      const a   = document.createElement("a");
-      a.href     = url;
+      const a = document.createElement("a");
+      a.href = url;
       a.download = filename;
       document.body.appendChild(a);
       a.click();
@@ -286,7 +286,7 @@ async function confirmDelete() {
   btn.textContent = "Deleting…";
 
   try {
-    const res  = await fetch(`${API}/files/${pendingDeleteId}`, {
+    const res = await fetch(`${API}/files/${pendingDeleteId}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -297,8 +297,8 @@ async function confirmDelete() {
       const row = document.getElementById(`row-${pendingDeleteId}`);
       if (row) {
         row.style.transition = "opacity 0.3s, transform 0.3s";
-        row.style.opacity    = "0";
-        row.style.transform  = "translateX(20px)";
+        row.style.opacity = "0";
+        row.style.transform = "translateX(20px)";
         setTimeout(() => row.remove(), 300);
       }
       allFiles = allFiles.filter((f) => f.id !== pendingDeleteId);
@@ -344,7 +344,7 @@ function showFilesLoading(show) {
 function showUploadToast(message, type = "error") {
   const toast = document.getElementById("upload-toast");
   toast.textContent = message;
-  toast.className   = `toast ${type}`;
+  toast.className = `toast ${type}`;
   toast.classList.remove("hidden");
   // Auto-hide after 5 seconds
   setTimeout(hideUploadToast, 5000);
@@ -355,10 +355,10 @@ function hideUploadToast() {
 
 // ── Helper: format file size into human-readable string ───────
 function formatSize(bytes) {
-  if (bytes === 0)           return "0 B";
-  if (bytes < 1024)          return `${bytes} B`;
-  if (bytes < 1024 * 1024)   return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 ** 3)     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes === 0) return "0 B";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 ** 3) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${(bytes / (1024 ** 3)).toFixed(1)} GB`;
 }
 
@@ -378,29 +378,29 @@ function escapeHtml(str) {
 // ── Helper: file type icon color & label by extension ────────
 function getFileTypeStyle(filename, mimetype) {
   const ext = filename.split(".").pop().toLowerCase();
-  const map  = {
-    pdf:  { color: "#fb923c", bg: "rgba(251,146,60,0.15)",  label: "PDF"  },
-    doc:  { color: "#60a5fa", bg: "rgba(96,165,250,0.15)",  label: "DOC"  },
-    docx: { color: "#60a5fa", bg: "rgba(96,165,250,0.15)",  label: "DOC"  },
-    xls:  { color: "#4ade80", bg: "rgba(74,222,128,0.15)", label: "XLS"  },
-    xlsx: { color: "#4ade80", bg: "rgba(74,222,128,0.15)", label: "XLS"  },
-    ppt:  { color: "#f472b6", bg: "rgba(244,114,182,0.15)", label: "PPT"  },
-    pptx: { color: "#f472b6", bg: "rgba(244,114,182,0.15)", label: "PPT"  },
-    jpg:  { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG"  },
-    jpeg: { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG"  },
-    png:  { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG"  },
-    gif:  { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG"  },
-    svg:  { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "SVG"  },
-    mp4:  { color: "#34d399", bg: "rgba(52,211,153,0.15)",  label: "VID"  },
-    mp3:  { color: "#f9a8d4", bg: "rgba(249,168,212,0.15)", label: "AUD"  },
-    zip:  { color: "#fbbf24", bg: "rgba(251,191,36,0.15)",  label: "ZIP"  },
-    rar:  { color: "#fbbf24", bg: "rgba(251,191,36,0.15)",  label: "ZIP"  },
-    txt:  { color: "#94a3b8", bg: "rgba(148,163,184,0.15)", label: "TXT"  },
-    js:   { color: "#facc15", bg: "rgba(250,204,21,0.15)",  label: "JS"   },
-    ts:   { color: "#38bdf8", bg: "rgba(56,189,248,0.15)",  label: "TS"   },
-    json: { color: "#fb923c", bg: "rgba(251,146,60,0.15)",  label: "JSON" },
+  const map = {
+    pdf: { color: "#fb923c", bg: "rgba(251,146,60,0.15)", label: "PDF" },
+    doc: { color: "#60a5fa", bg: "rgba(96,165,250,0.15)", label: "DOC" },
+    docx: { color: "#60a5fa", bg: "rgba(96,165,250,0.15)", label: "DOC" },
+    xls: { color: "#4ade80", bg: "rgba(74,222,128,0.15)", label: "XLS" },
+    xlsx: { color: "#4ade80", bg: "rgba(74,222,128,0.15)", label: "XLS" },
+    ppt: { color: "#f472b6", bg: "rgba(244,114,182,0.15)", label: "PPT" },
+    pptx: { color: "#f472b6", bg: "rgba(244,114,182,0.15)", label: "PPT" },
+    jpg: { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG" },
+    jpeg: { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG" },
+    png: { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG" },
+    gif: { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "IMG" },
+    svg: { color: "#a78bfa", bg: "rgba(167,139,250,0.15)", label: "SVG" },
+    mp4: { color: "#34d399", bg: "rgba(52,211,153,0.15)", label: "VID" },
+    mp3: { color: "#f9a8d4", bg: "rgba(249,168,212,0.15)", label: "AUD" },
+    zip: { color: "#fbbf24", bg: "rgba(251,191,36,0.15)", label: "ZIP" },
+    rar: { color: "#fbbf24", bg: "rgba(251,191,36,0.15)", label: "ZIP" },
+    txt: { color: "#94a3b8", bg: "rgba(148,163,184,0.15)", label: "TXT" },
+    js: { color: "#facc15", bg: "rgba(250,204,21,0.15)", label: "JS" },
+    ts: { color: "#38bdf8", bg: "rgba(56,189,248,0.15)", label: "TS" },
+    json: { color: "#fb923c", bg: "rgba(251,146,60,0.15)", label: "JSON" },
     html: { color: "#f87171", bg: "rgba(248,113,113,0.15)", label: "HTML" },
-    css:  { color: "#60a5fa", bg: "rgba(96,165,250,0.15)",  label: "CSS"  },
+    css: { color: "#60a5fa", bg: "rgba(96,165,250,0.15)", label: "CSS" },
   };
   return map[ext] || { color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: ext.toUpperCase().slice(0, 4) || "FILE" };
 }
