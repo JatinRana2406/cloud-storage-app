@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Uploaded files (don't commit actual uploads)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Environment / secrets
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/

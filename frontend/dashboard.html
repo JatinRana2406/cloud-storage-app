@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudStore — Dashboard</title>
+  <meta name="description" content="Your CloudStore dashboard. Upload, manage, and download your files securely." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="dashboard-page">
+
+  <!-- ── Top Navigation Bar ── -->
+  <header class="navbar" role="banner">
+    <div class="nav-inner">
+      <!-- Brand -->
+      <div class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5 5 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+          </svg>
+        </div>
+        <span class="brand-name">CloudStore</span>
+      </div>
+
+      <!-- User Info + Sign Out -->
+      <div class="nav-user">
+        <div class="user-avatar" id="user-avatar" title="Logged in user">?</div>
+        <span class="user-name" id="user-name">Loading...</span>
+        <button class="btn btn-ghost btn-sm" id="signout-btn" onclick="signOut()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content" role="main">
+
+    <!-- Stats Cards -->
+    <section class="stats-row" aria-label="Storage statistics">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-total-files">0</span>
+          <span class="stat-label">Total Files</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-purple">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-storage-used">0 B</span>
+          <span class="stat-label">Storage Used</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5 5 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">10 MB</span>
+          <span class="stat-label">Max File Size</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" aria-label="Upload files">
+      <div class="section-header">
+        <h2 class="section-title">Upload Files</h2>
+        <span class="section-hint">Max 10 MB per file</span>
+      </div>
+
+      <!-- Drag-and-drop upload zone -->
+      <div class="drop-zone" id="drop-zone" role="button" tabindex="0" aria-label="Click or drag files here to upload">
+        <div class="drop-zone-inner">
+          <div class="drop-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="drop-primary">Drag &amp; drop files here</p>
+          <p class="drop-secondary">or <span class="drop-link">click to browse</span></p>
+        </div>
+        <!-- Hidden actual input -->
+        <input type="file" id="file-input" multiple aria-label="Select files to upload" />
+      </div>
+
+      <!-- Upload progress bar (shown while uploading) -->
+      <div class="upload-progress hidden" id="upload-progress">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <span class="progress-label" id="progress-label">Uploading…</span>
+      </div>
+
+      <!-- Toast for upload messages -->
+      <div class="toast hidden" id="upload-toast" role="alert"></div>
+    </section>
+
+    <!-- Files List Section -->
+    <section class="files-section" aria-label="Your files">
+      <div class="section-header">
+        <h2 class="section-title">My Files</h2>
+        <!-- Search box -->
+        <div class="search-wrapper">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="search-input" class="search-input" placeholder="Search files…" aria-label="Search files" oninput="filterFiles()" />
+        </div>
+      </div>
+
+      <!-- Loading skeleton -->
+      <div class="loading-state" id="files-loading">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state hidden" id="files-empty">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+        </svg>
+        <p>No files yet. Upload your first file above!</p>
+      </div>
+
+      <!-- Files table -->
+      <div class="table-wrapper hidden" id="files-table-wrapper">
+        <table class="files-table" id="files-table" role="table">
+          <thead>
+            <tr>
+              <th scope="col">File</th>
+              <th scope="col">Type</th>
+              <th scope="col">Size</th>
+              <th scope="col">Uploaded</th>
+              <th scope="col" class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="files-tbody">
+            <!-- Rows injected by dashboard.js -->
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ── Delete Confirmation Modal ── -->
+  <div class="modal-overlay hidden" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+        </svg>
+      </div>
+      <h2 class="modal-title" id="modal-title">Delete File?</h2>
+      <p class="modal-body">This action cannot be undone. The file will be permanently removed.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
