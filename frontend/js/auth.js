@@ -2,7 +2,7 @@
 // js/auth.js — Handles Sign In and Sign Up form logic
 // ============================================================
 
-const API = "https://cloud-storage-app-1-oq19.onrender.com/";
+const API = "/api";
 
 // ── Switch between Sign In / Sign Up tabs ───────────────────
 function switchTab(tab) {

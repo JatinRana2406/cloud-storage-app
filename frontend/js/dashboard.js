@@ -2,7 +2,7 @@
 // js/dashboard.js — Handles file upload, listing, and deletion
 // ============================================================
 
-const API = "https://cloud-storage-app-1-oq19.onrender.com/";
+const API = "/api";
 
 // In-memory copy of the files list (used for search filtering)
 let allFiles = [];
